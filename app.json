@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "Lean",
+    "slug": "lean",
+    "version": "1.1.0",
+    "orientation": "default",
+    "icon": "./assets/icon.png",
+    "backgroundColor": "#000000",
+    "android": {
+      "package": "com.leanmeter.app",
+      "versionCode": 2,
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ],
+      "adaptiveIcon": {
+        "backgroundColor": "#000000",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      }
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Used to record speed and route of your ride."
+        }
+      ],
+      "expo-sensors",
+      "expo-sharing"
+    ]
+  }
+}
