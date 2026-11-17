@@ -8,11 +8,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
-
-      - name: Unpack project
-        run: unzip -o lean-app.zip -d app
 
       - uses: actions/setup-node@v4
         with:
@@ -24,18 +23,26 @@ jobs:
           java-version: 17
 
       - name: Install dependencies
-        working-directory: app
-        run: npm ci
+        run: npm install
+
+      - name: Generate map bundle and icons
+        run: npm run generate
 
       - name: Generate native Android project
-        working-directory: app
         run: npx expo prebuild -p android --no-install
 
       - name: Build release APK
-        working-directory: app/android
+        working-directory: android
         run: ./gradlew assembleRelease --no-daemon
 
       - uses: actions/upload-artifact@v4
         with:
           name: lean-apk
-          path: app/android/app/build/outputs/apk/release/app-release.apk
+          path: android/app/build/outputs/apk/release/app-release.apk
+
+      - name: Publish release with the APK
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp android/app/build/outputs/apk/release/app-release.apk lean.apk
+          gh release create "build-${{ github.run_number }}" lean.apk --title "Lean build ${{ github.run_number }}" --notes "Automatic build of ${{ github.sha }}"
